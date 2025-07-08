@@ -1,33 +1,6 @@
 {
-  "originHash" : "4b0611f9865aa616a3685270ce8f67542db1deb41a58a305e903f5c431e4a8ec",
+  "originHash" : "be6f306e6b5912aa4bef9243293c1eca5813564195343f1027d758d3982f74c8",
   "pins" : [
-    {
-      "identity" : "cwlcatchexception",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/mattgallagher/CwlCatchException.git",
-      "state" : {
-        "revision" : "07b2ba21d361c223e25e3c1e924288742923f08c",
-        "version" : "2.2.1"
-      }
-    },
-    {
-      "identity" : "cwlpreconditiontesting",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/mattgallagher/CwlPreconditionTesting.git",
-      "state" : {
-        "revision" : "0139c665ebb45e6a9fbdb68aabfd7c39f3fe0071",
-        "version" : "2.2.2"
-      }
-    },
-    {
-      "identity" : "nimble",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Quick/Nimble.git",
-      "state" : {
-        "revision" : "7795df4fff1a9cd231fe4867ae54f4dc5f5734f9",
-        "version" : "13.7.1"
-      }
-    },
     {
       "identity" : "quick",
       "kind" : "remoteSourceControl",
@@ -62,6 +35,24 @@
       "state" : {
         "revision" : "e0ec0f5f3af6f3e4d5e7a19d2af26b481acb6ba8",
         "version" : "1.0.3"
+      }
+    },
+    {
+      "identity" : "swiftformat",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/nicklockwood/SwiftFormat.git",
+      "state" : {
+        "revision" : "6ebb96ce454ddb036320104a1160350ee9581767",
+        "version" : "0.56.4"
+      }
+    },
+    {
+      "identity" : "swiftlintplugins",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SimplyDanny/SwiftLintPlugins.git",
+      "state" : {
+        "revision" : "8545ddf4de043e6f2051c5cf204f39ef778ebf6b",
+        "version" : "0.59.1"
       }
     }
   ],
