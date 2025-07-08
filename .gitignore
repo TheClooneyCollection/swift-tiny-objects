@@ -1,5 +1,5 @@
-# Created by https://www.toptal.com/developers/gitignore/api/swift,xcode,macos,python,vim
-# Edit at https://www.toptal.com/developers/gitignore?templates=swift,xcode,macos,python,vim
+# Created by https://www.toptal.com/developers/gitignore/api/vim,macos,swift,xcode,python,swiftpackagemanager
+# Edit at https://www.toptal.com/developers/gitignore?templates=vim,macos,swift,xcode,python,swiftpackagemanager
 
 ### macOS ###
 # General
@@ -289,6 +289,12 @@ fastlane/test_output
 
 iOSInjectionProject/
 
+### SwiftPackageManager ###
+Packages
+xcuserdata
+*.xcodeproj
+
+
 ### Vim ###
 # Swap
 [._]*.s[a-v][a-z]
@@ -323,4 +329,4 @@ tags
 /*.gcno
 **/xcshareddata/WorkspaceSettings.xcsettings
 
-# End of https://www.toptal.com/developers/gitignore/api/swift,xcode,macos,python,vim
+# End of https://www.toptal.com/developers/gitignore/api/vim,macos,swift,xcode,python,swiftpackagemanager
