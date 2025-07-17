@@ -4,6 +4,11 @@ from pathlib import Path
 from invoke import task
 
 @task
+def test(c):
+    command = "swift test"
+    c.run(command)
+
+@task
 def lint(c):
     root = Path(__file__).parent
 
