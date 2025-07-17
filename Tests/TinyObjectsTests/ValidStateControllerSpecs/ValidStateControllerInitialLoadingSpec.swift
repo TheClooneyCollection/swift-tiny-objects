@@ -26,9 +26,10 @@ final class ValidStateControllerInitialLoadingSpec: AsyncSpec {
             context("when starting the controller") {
                 beforeEach {
                     controller = .init(
-                        work: { handler in handler(.success(42))},
+                        work: { handler in handler(.success(42)) },
                         storage: storage,
-                        validate: { if $0 == 42 { 42 } else { nil } })
+                        validate: { if $0 == 42 { 42 } else { nil } },
+                    )
                 }
 
                 it("has an invalid state") {
@@ -36,7 +37,6 @@ final class ValidStateControllerInitialLoadingSpec: AsyncSpec {
                     #expect(state == .valid(42))
                 }
             }
-
         }
 
         context("when there is an invalid value in the storage") {
@@ -48,9 +48,10 @@ final class ValidStateControllerInitialLoadingSpec: AsyncSpec {
             context("when starting the controller") {
                 beforeEach {
                     controller = .init(
-                        work: { handler in handler(.success(42))},
+                        work: { handler in handler(.success(42)) },
                         storage: storage,
-                        validate: { if $0 == 42 { 42 } else { nil } })
+                        validate: { if $0 == 42 { 42 } else { nil } },
+                    )
                 }
 
                 it("has an invalid state") {
@@ -67,7 +68,11 @@ final class ValidStateControllerInitialLoadingSpec: AsyncSpec {
 
             context("when starting the controller") {
                 beforeEach {
-                    controller = .init(work: { handler in handler(.success(42)) }, storage: storage, validate: { $0 })
+                    controller = .init(
+                        work: { handler in handler(.success(42)) },
+                        storage: storage,
+                        validate: { $0 },
+                    )
                 }
 
                 it("has an invalid state") {

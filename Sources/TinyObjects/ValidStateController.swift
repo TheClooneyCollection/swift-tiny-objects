@@ -5,7 +5,10 @@
 //  Created by Nicholas Clooney on 17/7/2025.
 //
 
-public actor ValidStateController<Value: Equatable & Sendable, Error: Swift.Error>: Sendable {
+public actor ValidStateController<
+    Value: Equatable & Sendable,
+    Error: Swift.Error,
+> {
     /// Returns `Value` when a value is valid.
     /// Returns `nil` when a value is no longer valid.
     public typealias Validate = (Value) -> Value?
@@ -75,7 +78,9 @@ public actor ValidStateController<Value: Equatable & Sendable, Error: Swift.Erro
         state = .valid(validValue)
     }
 
-    public func update(state _: State) {}
+    public func update(value _: Value) {
+        // TODO: Check whether value is valid before updating
+    }
 
     public func requestRefresh() {}
 
