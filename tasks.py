@@ -20,7 +20,7 @@ def lint(c):
     build = "swift build"
     folders = "Sources Tests"
     swift_lint = plugin_command(f"swiftlint {folders}")
-    swift_format = plugin_command(f"swiftformat --swiftversion 6.1.2 {folders}")
+    swift_format = plugin_command(f"swiftformat --lint --swiftversion 6.1.2 {folders}")
 
     commands = [
             build,
