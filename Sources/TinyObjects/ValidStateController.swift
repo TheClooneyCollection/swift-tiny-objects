@@ -55,12 +55,14 @@ public actor ValidStateController<
         work: @escaping Work,
         storage: Storage,
         validate: @escaping Validate
-    ) {
+    ) async {
         self.work = work
         self.storage = storage
         self.validate = validate
 
         state = .initial
+
+        loadState()
     }
 
     private func loadState() {

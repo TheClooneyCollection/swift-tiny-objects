@@ -25,7 +25,7 @@ final class ValidStateControllerInitialLoadingSpec: AsyncSpec {
 
                 context("when starting the controller") {
                     beforeEach {
-                        controller = .init(
+                        controller = await .init(
                             work: { handler in handler(.success(42)) },
                             storage: storage,
                             validate: { if $0 == 42 { 42 } else { nil } },
@@ -49,7 +49,7 @@ final class ValidStateControllerInitialLoadingSpec: AsyncSpec {
 
                 context("when starting the controller") {
                     beforeEach {
-                        controller = .init(
+                        controller = await .init(
                             work: { handler in handler(.success(42)) },
                             storage: storage,
                             validate: { if $0 == 42 { 42 } else { nil } },
@@ -71,7 +71,7 @@ final class ValidStateControllerInitialLoadingSpec: AsyncSpec {
 
                 context("when starting the controller") {
                     beforeEach {
-                        controller = .init(
+                        controller = await .init(
                             work: { handler in handler(.success(42)) },
                             storage: storage,
                             validate: { $0 },
