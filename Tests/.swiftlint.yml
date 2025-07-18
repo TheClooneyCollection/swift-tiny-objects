@@ -1,0 +1,4 @@
+disabled_rules:
+  - static_over_final_class
+
+function_body_length: 100

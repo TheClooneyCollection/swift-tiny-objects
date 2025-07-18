@@ -21,7 +21,7 @@ def format(c):
 
     build = "swift build"
     folders = "Sources Tests"
-    swift_lint = plugin_command(f"swiftlint --fix {folders}")
+    swift_lint = plugin_command(f"swiftlint --strict --fix {folders}")
     swift_format = plugin_command(f"swiftformat --swiftversion 6.1.2 {folders}")
 
     commands = [
@@ -45,7 +45,7 @@ def lint(c):
 
     build = "swift build"
     folders = "Sources Tests"
-    swift_lint = plugin_command(f"swiftlint {folders}")
+    swift_lint = plugin_command(f"swiftlint --strict {folders}")
     swift_format = plugin_command(f"swiftformat --lint --swiftversion 6.1.2 {folders}")
 
     commands = [
