@@ -63,22 +63,27 @@ public actor ValidStateController<
     }
 
     private func loadState() {
-        // TODO: should try fetching a new one
         guard let storedValue = storage.load() else {
             state = .invalid
 
+            requestRefresh()
             return
         }
-        guard let validValue = validate(storedValue) else {
+
+        update(value: storedValue)
+    }
+
+    /// Update the state based on whether the value is valid
+    /// If the state is not valid, it will request a refresh.
+    public func update(value: Value) {
+        guard let validValue = validate(value) else {
             state = .invalid
+
+            requestRefresh()
             return
         }
 
         state = .valid(validValue)
-    }
-
-    public func update(value _: Value) {
-        // TODO: Check whether value is valid before updating
     }
 
     public func requestRefresh() {}
