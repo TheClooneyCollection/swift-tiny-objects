@@ -1,0 +1,4 @@
+--maxwidth 80
+--wrapArguments before-first
+--wrapParameters before-first
+--wrapCollections before-first
