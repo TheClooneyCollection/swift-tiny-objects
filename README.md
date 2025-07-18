@@ -1,5 +1,7 @@
 # Swift Tiny Objects Library
 
+[![Swift](https://github.com/TheClooneyCollection/swift-tiny-objects/actions/workflows/swift.yml/badge.svg)](https://github.com/TheClooneyCollection/swift-tiny-objects/actions/workflows/swift.yml)
+
 The **Tiny Objects** library promotes building extremely small, single-purpose components in Swift.
 
 Each “tiny object” should:
