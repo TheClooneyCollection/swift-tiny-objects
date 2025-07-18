@@ -23,6 +23,7 @@ let package = Package(
     dependencies: [
         // Quick and Nimble for testing
         .package(url: "https://github.com/Quick/Quick.git", from: "7.6.2"),
+        .package(url:  "https://github.com/Quick/Nimble.git", from: "13.7.1"),
 
         // SwiftLintPlugins for linting using SPM Build Tool Plugin
         // See the README for reasons to use the dedecated plugins repo rather than SwiftLint repo.
@@ -40,6 +41,7 @@ let package = Package(
             dependencies: [
                 "TinyObjects",
                 "Quick",
+                "Nimble",
             ]
         ),
     ]
