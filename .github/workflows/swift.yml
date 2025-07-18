@@ -1,0 +1,21 @@
+name: Swift
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install Invoke
+      run: pip3 install invoke
+    - name: Lint
+      run: invoke lint
+    - name: Run tests
+      run: invoke test
