@@ -14,6 +14,8 @@ final class ValidStateControllerInitialLoadingSpec: AsyncSpec {
     override class func spec() {
         typealias Controller = ValidStateController<Int, Never>
 
+        let work: Controller.Work = { 42 }
+
         var controller: Controller!
         var storage: Controller.Storage!
 
@@ -26,7 +28,7 @@ final class ValidStateControllerInitialLoadingSpec: AsyncSpec {
                 context("when starting the controller") {
                     beforeEach {
                         controller = await .init(
-                            work: { handler in handler(.success(42)) },
+                            work: work,
                             storage: storage,
                             validate: { if $0 == 42 { 42 } else { nil } },
                         )
@@ -50,7 +52,7 @@ final class ValidStateControllerInitialLoadingSpec: AsyncSpec {
                 context("when starting the controller") {
                     beforeEach {
                         controller = await .init(
-                            work: { handler in handler(.success(42)) },
+                            work: work,
                             storage: storage,
                             validate: { if $0 == 42 { 42 } else { nil } },
                         )
@@ -72,7 +74,7 @@ final class ValidStateControllerInitialLoadingSpec: AsyncSpec {
                 context("when starting the controller") {
                     beforeEach {
                         controller = await .init(
-                            work: { handler in handler(.success(42)) },
+                            work: work,
                             storage: storage,
                             validate: { $0 },
                         )

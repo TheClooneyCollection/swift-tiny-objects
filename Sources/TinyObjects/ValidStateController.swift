@@ -13,10 +13,7 @@ public actor ValidStateController<
     /// Returns `nil` when a value is no longer valid.
     public typealias Validate = (Value) -> Value?
 
-    public typealias WorkCompletionHandler = (Result<Value, Error>) -> Void
-    public typealias Work = (
-        _ completion: @escaping WorkCompletionHandler
-    ) -> Void
+    public typealias Work = @Sendable () async throws(Error) -> Value
 
     public struct Storage: Sendable {
         public let load: @Sendable () -> Value?
