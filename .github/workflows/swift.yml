@@ -8,17 +8,27 @@ on:
 
 jobs:
   build:
-
     runs-on: macos-latest
+
+    env:
+      SWIFT_VERSION: 6
 
     steps:
     - name: Checkout
       uses: actions/checkout@v4
 
+    - name: Cache Swift Package Manager Thingys
+      uses: actions/cache@v4
+      with:
+        path: |
+          .build
+          .swiftpm
+        key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}-${{ env.SWIFT_VERSION }}
+
     - name: Set Up Swift to use latest v6
       uses: swift-actions/setup-swift@v2
       with:
-        swift-version: 6
+        swift-version: ${{ env.SWIFT_VERSION }}
     - name: Swift version
       run: swift --version
 
