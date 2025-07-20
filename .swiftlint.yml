@@ -1,0 +1,5 @@
+disabled_rules:
+  - trailing_comma
+
+nesting:
+  type_level: 2
