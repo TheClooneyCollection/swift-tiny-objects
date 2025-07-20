@@ -21,16 +21,16 @@ public extension ValidStateController {
             }
         }
 
-        public enum InvalidReason: Sendable, CustomStringConvertible {
+        public enum InvalidReason: CustomStringConvertible {
             case cancelled
-            case notCached
-            case invalidated
+            case cacheMiss
+            case invalidated(Value)
             case failed(Failure)
 
             public var description: String {
                 switch self {
                 case .cancelled: "cancelled"
-                case .notCached: "notCached"
+                case .cacheMiss: "cacheMiss"
                 case .invalidated: "invalidated"
                 case let .failed(error): "failed(\(error))"
                 }

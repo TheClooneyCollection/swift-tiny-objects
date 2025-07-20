@@ -40,7 +40,7 @@ public class ValidStateController<
     /// If no valid state is to be found, it will request a refresh.
     private func loadState() async {
         guard let storedValue = dependencies.storage.load() else {
-            update(state: .invalid(.notCached))
+            update(state: .invalid(.cacheMiss))
 
             await requestRefresh()
             return
@@ -53,7 +53,7 @@ public class ValidStateController<
     /// If the state is not valid, it will request a refresh.
     public func update(value: Value) async {
         guard let validValue = dependencies.validate(value) else {
-            update(state: .invalid(.invalidated))
+            update(state: .invalid(.invalidated(value)))
 
             await requestRefresh()
             return

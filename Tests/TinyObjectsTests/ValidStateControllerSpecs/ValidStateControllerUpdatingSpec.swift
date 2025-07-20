@@ -36,7 +36,7 @@ final class ValidStateControllerUpdatingSpec: AsyncSpec {
                 it("has an valid state") {
                     expect(fixture.states) == [
                         .initial,
-                        .invalid(.notCached),
+                        .invalid(.cacheMiss),
                         .valid(42),
                         .valid(42),
                     ]
@@ -51,9 +51,9 @@ final class ValidStateControllerUpdatingSpec: AsyncSpec {
                 it("had an invalid state") {
                     expect(fixture.states) == [
                         .initial,
-                        .invalid(.notCached),
+                        .invalid(.cacheMiss),
                         .valid(42),
-                        .invalid(.invalidated),
+                        .invalid(.invalidated(41)),
                         .valid(42),
                     ]
                 }
