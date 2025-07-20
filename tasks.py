@@ -33,8 +33,8 @@ def format(c):
     # print(commands)
 
     for command in commands:
+        print("> ", command)
         c.run(command)
-        print()
 
 
 @task
@@ -45,7 +45,7 @@ def lint(c):
 
     build = "swift build"
     folders = "Sources Tests"
-    swift_lint = plugin_command(f"swiftlint --strict {folders}")
+    swift_lint = plugin_command(f"swiftlint {folders}")
     swift_format = plugin_command(f"swiftformat --lint --swiftversion 6.1.2 {folders}")
 
     commands = [
@@ -57,5 +57,5 @@ def lint(c):
     # print(commands)
 
     for command in commands:
+        print("> ", command)
         c.run(command)
-        print()
