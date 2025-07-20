@@ -19,14 +19,17 @@ jobs:
     runs-on: macos-15
 
     env:
-      SWIFT_VERSION: 6
+      # NOTE: Remember to update this whenever updating Swift version
+      SWIFT_VERSION: 6.2
 
     steps:
     - name: Checkout
       uses: actions/checkout@v4
 
+    # NOTE: Remeber to update the `SWIFT_VERSION` when updating this
     - name: Set Up Swift 6.2
       run: sudo xcode-select -s "/Applications/Xcode_26.0.0.app"
+
     - name: Swift version
       run: swift --version
 
@@ -36,7 +39,7 @@ jobs:
         path: |
           .build
           .swiftpm
-        key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}-${{ env.TOOLCHAINS }}
+        key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}-${{ env.SWIFT_VERSION }}
 
     - name: Install invoke
       run: brew install pyinvoke
