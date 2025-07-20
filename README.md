@@ -13,3 +13,8 @@ Each “tiny object” should:
 * Be **fully covered** by unit tests
 * Be **immutable** where possible
 * Have **no hidden side effects**
+
+## ValidStateController
+
+**ValidStateController** is a generic Swift utility that manages a value’s lifecycle by loading it from storage, validating it, and—if it’s missing or invalid—automatically refreshing it via an async work closure. State changes (initial, work-in-progress, valid, invalid) are exposed as a Combine publisher for easy subscription.
+
