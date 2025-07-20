@@ -15,7 +15,7 @@ final class ValidStateControllerUpdatingSpec: AsyncSpec {
         typealias Controller = ValidStateController<Int, Never>
 
         let work: Controller.Work = { 42 }
-        let storage = Controller.Storage.init(load: { nil }, save: { _ in })
+        let storage = Controller.Storage(load: { nil }, save: { _ in })
         let validate: Controller.Validate = { if $0 == 42 { 42 } else { nil } }
 
         var controller: Controller!

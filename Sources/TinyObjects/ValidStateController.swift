@@ -95,18 +95,16 @@ public actor ValidStateController<
 }
 
 extension ValidStateController.State: Equatable where Value: Equatable {
-    public static func ==(lhs: Self, rhs: Self) -> Bool {
+    public static func == (lhs: Self, rhs: Self) -> Bool {
         switch (lhs, rhs) {
         case let (.valid(lhsValue), .valid(rhsValue)):
-
-            return lhsValue == rhsValue
+            lhsValue == rhsValue
         case (.initial, .initial),
-            (.workInProgress, .workInProgress),
-            (.invalid, .invalid):
-
-            return true
+             (.workInProgress, .workInProgress),
+             (.invalid, .invalid):
+            true
         default:
-            return false
+            false
         }
     }
 }
