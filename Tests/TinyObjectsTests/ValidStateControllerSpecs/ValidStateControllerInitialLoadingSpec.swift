@@ -34,7 +34,7 @@ final class ValidStateControllerInitialLoadingSpec: AsyncSpec {
                         )
                     }
 
-                    it("has an invalid state") {
+                    it("has an valid state") {
                         let state = await controller.state
 
                         expect(state) == .valid(42)
