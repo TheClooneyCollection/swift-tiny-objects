@@ -5,30 +5,30 @@
 //  Created by Nicholas Clooney on 17/7/2025.
 //
 
-public actor ValidStateController<
-    Value: Sendable,
+public class ValidStateController<
+    Value,
     Error: Swift.Error,
 > {
     /// Returns `Value` when a value is valid.
     /// Returns `nil` when a value is no longer valid.
     public typealias Validate = (Value) -> Value?
 
-    public typealias Work = @Sendable () async throws(Error) -> Value
+    public typealias Work = () async throws(Error) -> Value
 
-    public struct Storage: Sendable {
-        public let load: @Sendable () -> Value?
-        public let save: @Sendable (Value) -> Void
+    public struct Storage {
+        public let load: () -> Value?
+        public let save: (Value) -> Void
 
         public init(
-            load: @escaping @Sendable () -> Value?,
-            save: @escaping @Sendable (Value) -> Void
+            load: @escaping () -> Value?,
+            save: @escaping (Value) -> Void
         ) {
             self.load = load
             self.save = save
         }
     }
 
-    public enum State: Sendable {
+    public enum State {
         case initial
         case workInProgress
         case valid(Value)
@@ -52,7 +52,7 @@ public actor ValidStateController<
         work: @escaping Work,
         storage: Storage,
         validate: @escaping Validate
-    ) async {
+    ) {
         self.work = work
         self.storage = storage
         self.validate = validate
