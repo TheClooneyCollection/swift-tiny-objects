@@ -5,45 +5,76 @@
 //  Created by Nicholas Clooney on 17/7/2025.
 //
 
-public actor ValidStateController<
-    Value: Sendable,
-    Error: Swift.Error,
+import Combine
+
+public class ValidStateController<
+    Value,
+    Failure: Error,
 > {
     /// Returns `Value` when a value is valid.
     /// Returns `nil` when a value is no longer valid.
-    public typealias Validate = @Sendable (Value) -> Value?
+    public typealias Validate = (Value) -> Value?
 
-    public typealias Work = @Sendable () async throws(Error) -> Value
+    // Should we assume the value is always valid?
+    // bc if it is not...
+    // 1. we have to do checks after the `work` is done
+    // 2. should we retry? and what is the retry policy (.immediate, .static,
+    // .custom)
+    public typealias Work = () async throws(Failure) -> Value
 
-    public struct Storage: Sendable {
-        public let load: @Sendable () -> Value?
-        public let save: @Sendable (Value) -> Void
+    public struct Storage {
+        public let load: () -> Value?
+        public let save: (Value) -> Void
 
         public init(
-            load: @escaping @Sendable () -> Value?,
-            save: @escaping @Sendable (Value) -> Void
+            load: @escaping () -> Value?,
+            save: @escaping (Value) -> Void
         ) {
             self.load = load
             self.save = save
         }
     }
 
-    public enum State: Sendable {
+    public enum State: CustomStringConvertible {
         case initial
         case workInProgress
         case valid(Value)
-        case invalid
+        case invalid(InvalidReason)
 
-//        public enum Invalid {
-//            case invalidated
-//            case timedOut
-//            case cancelled
-//            case failed(Error)
-//        }
+        public var description: String {
+            switch self {
+            case .initial: "initial"
+            case .workInProgress: "workInProgress"
+            case let .valid(value): "valid(\(value))"
+            case let .invalid(reason): "invalid(\(reason))"
+            }
+        }
+
+        public enum InvalidReason: Sendable, CustomStringConvertible {
+            case cancelled
+            case notCached
+            case invalidated
+            case failed(Failure)
+
+            public var description: String {
+                switch self {
+                case .cancelled: "cancelled"
+                case .notCached: "notCached"
+                case .invalidated: "invalidated"
+                case let .failed(error): "failed(\(error))"
+                }
+            }
+        }
     }
 
-    public private(set) var state: State
+    public var state: State {
+        stateSubject.value
+    }
 
+    public let statePublisher: AnyPublisher<State, Never>
+    private let stateSubject = CurrentValueSubject<State, Never>(.initial)
+
+    // Dependencies
     private let work: Work
     private let storage: Storage
     private let validate: Validate
@@ -52,43 +83,74 @@ public actor ValidStateController<
         work: @escaping Work,
         storage: Storage,
         validate: @escaping Validate
-    ) async {
+    ) {
         self.work = work
         self.storage = storage
         self.validate = validate
 
-        state = .initial
-
-        loadState()
+        statePublisher = stateSubject.eraseToAnyPublisher()
     }
 
-    private func loadState() {
-        guard let storedValue = storage.load() else {
-            state = .invalid
+    public func start() async {
+        await loadState()
+    }
 
-            requestRefresh()
+    private func update(state: State) {
+        stateSubject.value = state
+    }
+
+    /// Try to load a valid state from storage
+    /// If no valid state is to be found, it will request a refresh.
+    private func loadState() async {
+        guard let storedValue = storage.load() else {
+            update(state: .invalid(.notCached))
+
+            await requestRefresh()
             return
         }
 
-        update(value: storedValue)
+        await update(value: storedValue)
     }
 
     /// Update the state based on whether the value is valid
     /// If the state is not valid, it will request a refresh.
-    public func update(value: Value) {
+    public func update(value: Value) async {
         guard let validValue = validate(value) else {
-            state = .invalid
+            update(state: .invalid(.invalidated))
 
-            requestRefresh()
+            await requestRefresh()
             return
         }
 
-        state = .valid(validValue)
+        update(state: .valid(validValue))
     }
 
-    public func requestRefresh() {}
+    /// Request a refresh of state if not work in progress
+    public func requestRefresh() async {
+        if case .workInProgress = state {
+            return
+        }
 
-    public func forceRefresh() {}
+        await refresh()
+    }
+
+    /// Force a refresh without checking the work in prgress state
+    public func forceRefresh() async {
+        await refresh()
+    }
+
+    private func refresh() async {
+        do {
+            let value = try await work()
+
+            // TODO: If the value is not valid...
+            // Do we keep retrying??? also what is the retry strategy???
+
+            await update(value: value)
+        } catch {
+            update(state: .invalid(.failed(error)))
+        }
+    }
 
     // ???
     public func cancelRefresh() {}

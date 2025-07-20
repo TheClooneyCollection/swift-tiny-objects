@@ -28,15 +28,17 @@ final class ValidStateControllerInitialLoadingSpec: AsyncSpec {
 
                 context("when starting the controller") {
                     beforeEach {
-                        controller = await .init(
+                        controller = .init(
                             work: work,
                             storage: storage,
                             validate: validate,
                         )
+
+                        await controller.start()
                     }
 
                     it("has an valid state") {
-                        let state = await controller.state
+                        let state = controller.state
 
                         expect(state) == .valid(42)
                     }
@@ -52,17 +54,19 @@ final class ValidStateControllerInitialLoadingSpec: AsyncSpec {
 
                 context("when starting the controller") {
                     beforeEach {
-                        controller = await .init(
+                        controller = .init(
                             work: work,
                             storage: storage,
                             validate: validate,
                         )
+
+                        await controller.start()
                     }
 
                     it("has an invalid state") {
-                        let state = await controller.state
+                        let state = controller.state
 
-                        expect(state) == .invalid
+                        expect(state) == .invalid(.invalidated)
                     }
                 }
             }
@@ -74,17 +78,19 @@ final class ValidStateControllerInitialLoadingSpec: AsyncSpec {
 
                 context("when starting the controller") {
                     beforeEach {
-                        controller = await .init(
+                        controller = .init(
                             work: work,
                             storage: storage,
                             validate: validate,
                         )
+
+                        await controller.start()
                     }
 
                     it("has an invalid state") {
-                        let state = await controller.state
+                        let state = controller.state
 
-                        expect(state) == .invalid
+                        expect(state) == .invalid(.notCached)
                     }
                 }
             }
