@@ -19,11 +19,12 @@ final class ValidStateControllerUpdatingSpec: AsyncSpec {
         describe("ValidStateController") {
             beforeEach {
                 fixture = .init(
-                    work: { 42 },
-                    storage: .init(load: { nil }, save: { _ in }),
-                    validate: { if $0 == 42 { 42 } else { nil } },
+                    dependencies: .init(
+                        work: { 42 },
+                        storage: .init(load: { nil }, save: { _ in }),
+                        validate: { if $0 == 42 { 42 } else { nil } },
+                    ),
                 )
-                fixture.makeController()
                 await fixture.controller.start()
             }
 

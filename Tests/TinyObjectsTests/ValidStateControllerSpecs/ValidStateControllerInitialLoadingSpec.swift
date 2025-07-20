@@ -12,33 +12,35 @@ import TinyObjects
 
 final class ValidStateControllerInitialLoadingSpec: AsyncSpec {
     override class func spec() {
-        typealias Controller = ValidStateController<Int, Never>
+        var fixture: ValidaStateControllerFixture<Int, Never>!
 
-        let work: Controller.Work = { 42 }
-        let validate: Controller.Validate = { if $0 == 42 { 42 } else { nil } }
-
-        var controller: Controller!
-        var storage: Controller.Storage!
+        func makeFixture(
+            storage: ValidStateController<Int, Never>.Storage,
+        ) -> ValidaStateControllerFixture<Int, Never> {
+            .init(
+                dependencies: .init(
+                    work: { 42 },
+                    storage: storage,
+                    validate: { if $0 == 42 { 42 } else { nil } },
+                ),
+            )
+        }
 
         describe("ValidStateController") {
             context("when there is a valid value in the storage") {
                 beforeEach {
-                    storage = .init(load: { 42 }, save: { _ in })
+                    fixture = makeFixture(
+                        storage: .init(load: { 42 }, save: { _ in }),
+                    )
                 }
 
                 context("when starting the controller") {
                     beforeEach {
-                        controller = .init(
-                            work: work,
-                            storage: storage,
-                            validate: validate,
-                        )
-
-                        await controller.start()
+                        await fixture.controller.start()
                     }
 
                     it("has an valid state") {
-                        let state = controller.state
+                        let state = fixture.controller.state
 
                         expect(state) == .valid(42)
                     }
@@ -49,48 +51,44 @@ final class ValidStateControllerInitialLoadingSpec: AsyncSpec {
                 beforeEach {
                     let not42 = 41
 
-                    storage = .init(load: { not42 }, save: { _ in })
+                    fixture = makeFixture(
+                        storage: .init(load: { not42 }, save: { _ in }),
+                    )
                 }
 
                 context("when starting the controller") {
                     beforeEach {
-                        controller = .init(
-                            work: work,
-                            storage: storage,
-                            validate: validate,
-                        )
-
-                        await controller.start()
+                        await fixture.controller.start()
                     }
 
                     it("has an invalid state") {
-                        let state = controller.state
-
-                        expect(state) == .invalid(.invalidated)
+                        expect(fixture.states) == [
+                            .initial,
+                            .invalid(.invalidated),
+                            .valid(42),
+                        ]
                     }
                 }
             }
 
             context("when there is nothing in the storage") {
                 beforeEach {
-                    storage = .init(load: { nil }, save: { _ in })
+                    fixture = makeFixture(
+                        storage: .init(load: { nil }, save: { _ in }),
+                    )
                 }
 
                 context("when starting the controller") {
                     beforeEach {
-                        controller = .init(
-                            work: work,
-                            storage: storage,
-                            validate: validate,
-                        )
-
-                        await controller.start()
+                        await fixture.controller.start()
                     }
 
                     it("has an invalid state") {
-                        let state = controller.state
-
-                        expect(state) == .invalid(.notCached)
+                        expect(fixture.states) == [
+                            .initial,
+                            .invalid(.notCached),
+                            .valid(42),
+                        ]
                     }
                 }
             }
