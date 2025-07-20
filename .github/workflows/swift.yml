@@ -14,7 +14,7 @@ on:
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: macos-15
 
     env:
       SWIFT_VERSION: 6
