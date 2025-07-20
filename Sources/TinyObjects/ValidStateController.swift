@@ -11,7 +11,7 @@ public actor ValidStateController<
 > {
     /// Returns `Value` when a value is valid.
     /// Returns `nil` when a value is no longer valid.
-    public typealias Validate = (Value) -> Value?
+    public typealias Validate = @Sendable (Value) -> Value?
 
     public typealias Work = @Sendable () async throws(Error) -> Value
 

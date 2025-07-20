@@ -15,6 +15,7 @@ final class ValidStateControllerInitialLoadingSpec: AsyncSpec {
         typealias Controller = ValidStateController<Int, Never>
 
         let work: Controller.Work = { 42 }
+        let validate: Controller.Validate = { if $0 == 42 { 42 } else { nil } }
 
         var controller: Controller!
         var storage: Controller.Storage!
@@ -30,7 +31,7 @@ final class ValidStateControllerInitialLoadingSpec: AsyncSpec {
                         controller = await .init(
                             work: work,
                             storage: storage,
-                            validate: { if $0 == 42 { 42 } else { nil } },
+                            validate: validate,
                         )
                     }
 
@@ -54,7 +55,7 @@ final class ValidStateControllerInitialLoadingSpec: AsyncSpec {
                         controller = await .init(
                             work: work,
                             storage: storage,
-                            validate: { if $0 == 42 { 42 } else { nil } },
+                            validate: validate,
                         )
                     }
 
@@ -76,7 +77,7 @@ final class ValidStateControllerInitialLoadingSpec: AsyncSpec {
                         controller = await .init(
                             work: work,
                             storage: storage,
-                            validate: { $0 },
+                            validate: validate,
                         )
                     }
 
