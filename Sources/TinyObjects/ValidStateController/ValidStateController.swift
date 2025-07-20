@@ -11,62 +11,6 @@ public class ValidStateController<
     Value,
     Failure: Error,
 > {
-    /// Returns `Value` when a value is valid.
-    /// Returns `nil` when a value is no longer valid.
-    public typealias Validate = (Value) -> Value?
-
-    // Should we assume the value is always valid?
-    // bc if it is not...
-    // 1. we have to do checks after the `work` is done
-    // 2. should we retry? and what is the retry policy (.immediate, .static,
-    // .custom)
-    public typealias Work = () async throws(Failure) -> Value
-
-    public struct Storage {
-        public let load: () -> Value?
-        public let save: (Value) -> Void
-
-        public init(
-            load: @escaping () -> Value?,
-            save: @escaping (Value) -> Void
-        ) {
-            self.load = load
-            self.save = save
-        }
-    }
-
-    public enum State: CustomStringConvertible {
-        case initial
-        case workInProgress
-        case valid(Value)
-        case invalid(InvalidReason)
-
-        public var description: String {
-            switch self {
-            case .initial: "initial"
-            case .workInProgress: "workInProgress"
-            case let .valid(value): "valid(\(value))"
-            case let .invalid(reason): "invalid(\(reason))"
-            }
-        }
-
-        public enum InvalidReason: Sendable, CustomStringConvertible {
-            case cancelled
-            case notCached
-            case invalidated
-            case failed(Failure)
-
-            public var description: String {
-                switch self {
-                case .cancelled: "cancelled"
-                case .notCached: "notCached"
-                case .invalidated: "invalidated"
-                case let .failed(error): "failed(\(error))"
-                }
-            }
-        }
-    }
-
     public var state: State {
         stateSubject.value
     }
@@ -74,19 +18,12 @@ public class ValidStateController<
     public let statePublisher: AnyPublisher<State, Never>
     private let stateSubject = CurrentValueSubject<State, Never>(.initial)
 
-    // Dependencies
-    private let work: Work
-    private let storage: Storage
-    private let validate: Validate
+    private let dependencies: Dependencies
 
     public init(
-        work: @escaping Work,
-        storage: Storage,
-        validate: @escaping Validate
+        dependencies: Dependencies
     ) {
-        self.work = work
-        self.storage = storage
-        self.validate = validate
+        self.dependencies = dependencies
 
         statePublisher = stateSubject.eraseToAnyPublisher()
     }
@@ -102,7 +39,7 @@ public class ValidStateController<
     /// Try to load a valid state from storage
     /// If no valid state is to be found, it will request a refresh.
     private func loadState() async {
-        guard let storedValue = storage.load() else {
+        guard let storedValue = dependencies.storage.load() else {
             update(state: .invalid(.notCached))
 
             await requestRefresh()
@@ -115,7 +52,7 @@ public class ValidStateController<
     /// Update the state based on whether the value is valid
     /// If the state is not valid, it will request a refresh.
     public func update(value: Value) async {
-        guard let validValue = validate(value) else {
+        guard let validValue = dependencies.validate(value) else {
             update(state: .invalid(.invalidated))
 
             await requestRefresh()
@@ -141,7 +78,7 @@ public class ValidStateController<
 
     private func refresh() async {
         do {
-            let value = try await work()
+            let value = try await dependencies.work()
 
             // TODO: If the value is not valid...
             // Do we keep retrying??? also what is the retry strategy???
