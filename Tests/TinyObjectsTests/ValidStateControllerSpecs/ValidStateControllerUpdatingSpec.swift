@@ -14,7 +14,7 @@ import TinyObjects
 
 final class ValidStateControllerUpdatingSpec: AsyncSpec {
     override class func spec() {
-        var fixture: ValidaStateControllerFixture<Int, Never>!
+        var fixture: ValidStateControllerFixture<Int, Never>!
 
         describe("ValidStateController") {
             beforeEach {

@@ -1,5 +1,5 @@
 //
-//  ValidaStateControllerFixture.swift
+//  ValidStateControllerFixture.swift
 //  TinyObjects
 //
 //  Created by Nicholas Clooney on 20/7/2025.
@@ -9,7 +9,7 @@ import Combine
 
 import TinyObjects
 
-final class ValidaStateControllerFixture<Value, Failure: Error> {
+final class ValidStateControllerFixture<Value, Failure: Error> {
     typealias Controller = ValidStateController<Value, Failure>
 
     private(set) var states: [Controller.State] = []

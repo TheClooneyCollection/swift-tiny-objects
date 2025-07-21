@@ -12,11 +12,11 @@ import TinyObjects
 
 final class ValidStateControllerInitialLoadingSpec: AsyncSpec {
     override class func spec() {
-        var fixture: ValidaStateControllerFixture<Int, Never>!
+        var fixture: ValidStateControllerFixture<Int, Never>!
 
         func makeFixture(
             storage: ValidStateController<Int, Never>.Storage,
-        ) -> ValidaStateControllerFixture<Int, Never> {
+        ) -> ValidStateControllerFixture<Int, Never> {
             .init(
                 dependencies: .init(
                     work: { 42 },
