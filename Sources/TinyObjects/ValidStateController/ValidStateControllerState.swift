@@ -38,3 +38,18 @@ public extension ValidStateController {
         }
     }
 }
+
+extension ValidStateController.State: Equatable where Value: Equatable {
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        switch (lhs, rhs) {
+        case let (.valid(lhsValue), .valid(rhsValue)):
+            lhsValue == rhsValue
+        case (.initial, .initial),
+             (.workInProgress, .workInProgress),
+             (.invalid, .invalid):
+            true
+        default:
+            false
+        }
+    }
+}
