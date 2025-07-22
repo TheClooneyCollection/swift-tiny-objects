@@ -14,7 +14,9 @@ import TinyObjects
 
 final class ValidStateControllerUpdatingSpec: AsyncSpec {
     override class func spec() {
-        var fixture: ValidStateControllerFixture<Int, Never>!
+        typealias Fixture = ValidStateControllerFixture<Int, Never>
+
+        var fixture: Fixture!
 
         describe("ValidStateController") {
             beforeEach {
@@ -22,7 +24,7 @@ final class ValidStateControllerUpdatingSpec: AsyncSpec {
                     dependencies: .init(
                         work: { 42 },
                         storage: .init(load: { nil }, save: { _ in }),
-                        validate: { if $0 == 42 { 42 } else { nil } },
+                        validate: Fixture.Validate.equalTo(42),
                     ),
                 )
                 await fixture.controller.start()

@@ -12,16 +12,18 @@ import TinyObjects
 
 final class ValidStateControllerInitialLoadingSpec: AsyncSpec {
     override class func spec() {
-        var fixture: ValidStateControllerFixture<Int, Never>!
+        typealias Fixture = ValidStateControllerFixture<Int, Never>
+        var fixture: Fixture!
 
         func makeFixture(
-            storage: ValidStateController<Int, Never>.Storage,
-        ) -> ValidStateControllerFixture<Int, Never> {
+            storage: Fixture.Controller.Storage,
+        ) -> Fixture {
             .init(
                 dependencies: .init(
+                    // work: Fixture.Work.never(), - this hangs... ofc it does
                     work: { 42 },
                     storage: storage,
-                    validate: { if $0 == 42 { 42 } else { nil } },
+                    validate: Fixture.Validate.equalTo(42),
                 ),
             )
         }
@@ -40,9 +42,10 @@ final class ValidStateControllerInitialLoadingSpec: AsyncSpec {
                     }
 
                     it("has an valid state") {
-                        let state = fixture.controller.state
-
-                        expect(state) == .valid(42)
+                        expect(fixture.states) == [
+                            .initial,
+                            .valid(42),
+                        ]
                     }
                 }
             }
@@ -65,7 +68,7 @@ final class ValidStateControllerInitialLoadingSpec: AsyncSpec {
                         expect(fixture.states) == [
                             .initial,
                             .invalid(.invalidated(41)),
-                            .valid(42),
+                            .valid(42), // as expected with `work` being `{ 42 }`
                         ]
                     }
                 }
@@ -87,7 +90,7 @@ final class ValidStateControllerInitialLoadingSpec: AsyncSpec {
                         expect(fixture.states) == [
                             .initial,
                             .invalid(.cacheMiss),
-                            .valid(42),
+                            .valid(42), // as expected with `work` being `{ 42 }`
                         ]
                     }
                 }
