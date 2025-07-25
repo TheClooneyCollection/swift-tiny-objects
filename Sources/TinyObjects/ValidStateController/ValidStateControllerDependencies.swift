@@ -10,15 +10,18 @@ public extension ValidStateController {
         public let work: Work
         public let storage: Storage
         public let validate: Validate
+        public let retryPolicy: RetryPolicy
 
         public init(
             work: @escaping Work,
             storage: Storage,
-            validate: @escaping Validate
+            validate: @escaping Validate,
+            retryPolicy: RetryPolicy,
         ) {
             self.work = work
             self.storage = storage
             self.validate = validate
+            self.retryPolicy = retryPolicy
         }
     }
 }
@@ -30,6 +33,14 @@ public extension ValidStateController {
     // 2. should we retry? and what is the retry policy (.immediate, .static,
     // .custom)
     typealias Work = () async throws(Failure) -> Value
+
+    enum RetryPolicy {
+        /// `noRetry` **allows** the initial `work` call if there’s no valid
+        /// cached value,
+        /// but prevents any subsequent retry attempts.
+        case noRetry
+        case immediate
+    }
 
     struct Storage {
         public let load: () -> Value?

@@ -36,33 +36,55 @@ public class ValidStateController<
         stateSubject.value = state
     }
 
-    /// Try to load a valid state from storage
-    /// If no valid state is to be found, it will request a refresh.
+    /// Try to load a valid value from storage
+    /// If there is no valid value, it will request a refresh.
     private func loadState() async {
-        guard let storedValue = dependencies.storage.load() else {
+        guard
+            let storedValue = dependencies.storage.load()
+        else {
             update(state: .invalid(.cacheMiss))
 
             await requestRefresh()
             return
         }
 
-        await update(value: storedValue)
-    }
-
-    /// Update the state based on whether the value is valid
-    /// If the state is not valid, it will request a refresh.
-    public func update(value: Value) async {
-        guard let validValue = dependencies.validate(value) else {
-            update(state: .invalid(.invalidated(value)))
+        guard
+            let _ = dependencies.validate(storedValue)
+        else {
+            update(state: .invalid(.invalidated(storedValue)))
 
             await requestRefresh()
             return
         }
 
-        update(state: .valid(validValue))
+        update(state: .valid(storedValue))
     }
 
-    /// Request a refresh of state if not work in progress
+    /// Update the state based on whether the value is valid
+    /// If the value is not valid, it will request a refresh based on the retry
+    /// policy.
+    public func update(value: Value) async {
+        // If the value is valid, set a `valid` state.
+        if let validValue = dependencies.validate(value) {
+            update(state: .valid(validValue))
+
+            return
+        }
+
+        // If the `value` is not valid, retry based on the policy.
+
+        update(state: .invalid(.invalidated(value)))
+
+        // TODO: Move this to `refresh`???
+        switch dependencies.retryPolicy {
+        case .noRetry:
+            update(state: .paused)
+        case .immediate:
+            await requestRefresh()
+        }
+    }
+
+    /// Request a refresh if state is not already `workInProgress`
     public func requestRefresh() async {
         if case .workInProgress = state {
             return
@@ -79,9 +101,6 @@ public class ValidStateController<
     private func refresh() async {
         do {
             let value = try await dependencies.work()
-
-            // TODO: If the value is not valid...
-            // Do we keep retrying??? also what is the retry strategy???
 
             await update(value: value)
         } catch {
