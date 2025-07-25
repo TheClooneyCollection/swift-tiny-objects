@@ -36,17 +36,28 @@ public class ValidStateController<
         stateSubject.value = state
     }
 
-    /// Try to load a valid state from storage
-    /// If no valid state is to be found, it will request a refresh.
+    /// Try to load a valid value from storage
+    /// If there is no value at all or the value is not valid, it will request a refresh.
     private func loadState() async {
-        guard let storedValue = dependencies.storage.load() else {
+        guard
+            let storedValue = dependencies.storage.load()
+        else {
             update(state: .invalid(.cacheMiss))
 
             await requestRefresh()
             return
         }
 
-        await update(value: storedValue)
+        guard
+            let _ = dependencies.validate(storedValue)
+        else {
+            update(state: .invalid(.invalidated(storedValue)))
+
+            await requestRefresh()
+            return
+        }
+
+        update(state: .valid(storedValue))
     }
 
     /// Update the state based on whether the value is valid
