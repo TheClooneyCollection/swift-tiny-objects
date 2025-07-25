@@ -35,7 +35,8 @@ public extension ValidStateController {
     typealias Work = () async throws(Failure) -> Value
 
     enum RetryPolicy {
-        /// `noRetry` **allows** the initial `work` call if there’s no valid cached value,
+        /// `noRetry` **allows** the initial `work` call if there’s no valid
+        /// cached value,
         /// but prevents any subsequent retry attempts.
         case noRetry
         case immediate

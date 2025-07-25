@@ -37,7 +37,7 @@ public class ValidStateController<
     }
 
     /// Try to load a valid value from storage
-    /// If there is no value at all or the value is not valid, it will request a refresh.
+    /// If there is no valid value, it will request a refresh.
     private func loadState() async {
         guard
             let storedValue = dependencies.storage.load()
@@ -61,7 +61,8 @@ public class ValidStateController<
     }
 
     /// Update the state based on whether the value is valid
-    /// If the value is not valid, it will request a refresh based on the retry policy.
+    /// If the value is not valid, it will request a refresh based on the retry
+    /// policy.
     public func update(value: Value) async {
         // If the value is valid, set a `valid` state.
         if let validValue = dependencies.validate(value) {
@@ -74,6 +75,7 @@ public class ValidStateController<
 
         update(state: .invalid(.invalidated(value)))
 
+        // TODO: Move this to `refresh`???
         switch dependencies.retryPolicy {
         case .noRetry:
             update(state: .paused)
@@ -82,7 +84,7 @@ public class ValidStateController<
         }
     }
 
-    /// Request a refresh of state if not work in progress
+    /// Request a refresh if state is not already `workInProgress`
     public func requestRefresh() async {
         if case .workInProgress = state {
             return
