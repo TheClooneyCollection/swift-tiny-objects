@@ -61,16 +61,25 @@ public class ValidStateController<
     }
 
     /// Update the state based on whether the value is valid
-    /// If the state is not valid, it will request a refresh.
+    /// If the value is not valid, it will request a refresh based on the retry policy.
     public func update(value: Value) async {
-        guard let validValue = dependencies.validate(value) else {
-            update(state: .invalid(.invalidated(value)))
+        // If the value is valid, set a `valid` state.
+        if let validValue = dependencies.validate(value) {
+            update(state: .valid(validValue))
 
-            await requestRefresh()
             return
         }
 
-        update(state: .valid(validValue))
+        // If the `value` is not valid, retry based on the policy.
+
+        update(state: .invalid(.invalidated(value)))
+
+        switch dependencies.retryPolicy {
+        case .noRetry:
+            update(state: .paused)
+        case .immediate:
+            await requestRefresh()
+        }
     }
 
     /// Request a refresh of state if not work in progress
@@ -90,9 +99,6 @@ public class ValidStateController<
     private func refresh() async {
         do {
             let value = try await dependencies.work()
-
-            // TODO: If the value is not valid...
-            // Do we keep retrying??? also what is the retry strategy???
 
             await update(value: value)
         } catch {
