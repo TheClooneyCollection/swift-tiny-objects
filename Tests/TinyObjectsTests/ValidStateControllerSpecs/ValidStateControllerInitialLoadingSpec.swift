@@ -24,6 +24,7 @@ final class ValidStateControllerInitialLoadingSpec: AsyncSpec {
                     work: { 42 },
                     storage: storage,
                     validate: Fixture.Validate.equalTo(42),
+                    retryPolicy: .noRetry,
                 ),
             )
         }
@@ -64,7 +65,7 @@ final class ValidStateControllerInitialLoadingSpec: AsyncSpec {
                         await fixture.controller.start()
                     }
 
-                    it("has an invalid state") {
+                    it("has an initial invalid state and then a valid state") {
                         expect(fixture.states) == [
                             .initial,
                             .invalid(.invalidated(41)),
@@ -86,7 +87,7 @@ final class ValidStateControllerInitialLoadingSpec: AsyncSpec {
                         await fixture.controller.start()
                     }
 
-                    it("has an invalid state") {
+                    it("has an initial invalid state and then a valid state") {
                         expect(fixture.states) == [
                             .initial,
                             .invalid(.cacheMiss),

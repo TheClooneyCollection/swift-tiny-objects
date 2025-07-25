@@ -25,6 +25,7 @@ final class ValidStateControllerUpdatingSpec: AsyncSpec {
                         work: { 42 },
                         storage: .init(load: { nil }, save: { _ in }),
                         validate: Fixture.Validate.equalTo(42),
+                        retryPolicy: .noRetry,
                     ),
                 )
                 await fixture.controller.start()
@@ -35,12 +36,12 @@ final class ValidStateControllerUpdatingSpec: AsyncSpec {
                     await fixture.controller.update(value: 42)
                 }
 
-                it("has an valid state") {
+                it("has an initial valid state and a second valid state") {
                     expect(fixture.states) == [
                         .initial,
                         .invalid(.cacheMiss),
-                        .valid(42),
-                        .valid(42),
+                        .valid(42), // comes from first `work` when storage is empty
+                        .valid(42), // comes from `update`
                     ]
                 }
             }
@@ -50,13 +51,13 @@ final class ValidStateControllerUpdatingSpec: AsyncSpec {
                     await fixture.controller.update(value: 41)
                 }
 
-                it("had an invalid state") {
+                it("has an invalid state then a paused state") {
                     expect(fixture.states) == [
                         .initial,
                         .invalid(.cacheMiss),
-                        .valid(42),
+                        .valid(42), // comes from first `work` when storage is empty
                         .invalid(.invalidated(41)),
-                        .valid(42),
+                        .paused,
                     ]
                 }
             }
