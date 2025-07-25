@@ -8,6 +8,7 @@
 public extension ValidStateController {
     enum State: CustomStringConvertible {
         case initial
+        case paused
         case workInProgress
         case valid(Value)
         case invalid(InvalidReason)
@@ -15,6 +16,7 @@ public extension ValidStateController {
         public var description: String {
             switch self {
             case .initial: "initial"
+            case .paused: "paused"
             case .workInProgress: "workInProgress"
             case let .valid(value): "valid(\(value))"
             case let .invalid(reason): "invalid(\(reason))"
@@ -45,6 +47,7 @@ extension ValidStateController.State: Equatable where Value: Equatable {
         case let (.valid(lhsValue), .valid(rhsValue)):
             lhsValue == rhsValue
         case (.initial, .initial),
+             (.paused, .paused),
              (.workInProgress, .workInProgress),
              (.invalid, .invalid):
             true
